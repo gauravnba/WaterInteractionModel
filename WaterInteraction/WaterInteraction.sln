@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WaterInteraction", "WaterInteraction.vcxproj", "{FA42BDC6-6927-40D9-B289-DD6CB8A1814C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OceanCS", "..\OceanCS\OceanCS.vcxproj", "{D3D11109-96D0-4629-88B8-122C0256058C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Profile|x64 = Profile|x64
+		Profile|x86 = Profile|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FA42BDC6-6927-40D9-B289-DD6CB8A1814C}.Debug|x64.ActiveCfg = Debug|x64
+		{FA42BDC6-6927-40D9-B289-DD6CB8A1814C}.Debug|x64.Build.0 = Debug|x64
+		{FA42BDC6-6927-40D9-B289-DD6CB8A1814C}.Debug|x86.ActiveCfg = Debug|Win32
+		{FA42BDC6-6927-40D9-B289-DD6CB8A1814C}.Debug|x86.Build.0 = Debug|Win32
+		{FA42BDC6-6927-40D9-B289-DD6CB8A1814C}.Profile|x64.ActiveCfg = Release|x64
+		{FA42BDC6-6927-40D9-B289-DD6CB8A1814C}.Profile|x64.Build.0 = Release|x64
+		{FA42BDC6-6927-40D9-B289-DD6CB8A1814C}.Profile|x86.ActiveCfg = Release|Win32
+		{FA42BDC6-6927-40D9-B289-DD6CB8A1814C}.Profile|x86.Build.0 = Release|Win32
+		{FA42BDC6-6927-40D9-B289-DD6CB8A1814C}.Release|x64.ActiveCfg = Release|x64
+		{FA42BDC6-6927-40D9-B289-DD6CB8A1814C}.Release|x64.Build.0 = Release|x64
+		{FA42BDC6-6927-40D9-B289-DD6CB8A1814C}.Release|x86.ActiveCfg = Release|Win32
+		{FA42BDC6-6927-40D9-B289-DD6CB8A1814C}.Release|x86.Build.0 = Release|Win32
+		{D3D11109-96D0-4629-88B8-122C0256058C}.Debug|x64.ActiveCfg = Debug|x64
+		{D3D11109-96D0-4629-88B8-122C0256058C}.Debug|x64.Build.0 = Debug|x64
+		{D3D11109-96D0-4629-88B8-122C0256058C}.Debug|x86.ActiveCfg = Debug|Win32
+		{D3D11109-96D0-4629-88B8-122C0256058C}.Debug|x86.Build.0 = Debug|Win32
+		{D3D11109-96D0-4629-88B8-122C0256058C}.Profile|x64.ActiveCfg = Profile|x64
+		{D3D11109-96D0-4629-88B8-122C0256058C}.Profile|x64.Build.0 = Profile|x64
+		{D3D11109-96D0-4629-88B8-122C0256058C}.Profile|x86.ActiveCfg = Profile|Win32
+		{D3D11109-96D0-4629-88B8-122C0256058C}.Profile|x86.Build.0 = Profile|Win32
+		{D3D11109-96D0-4629-88B8-122C0256058C}.Release|x64.ActiveCfg = Release|x64
+		{D3D11109-96D0-4629-88B8-122C0256058C}.Release|x64.Build.0 = Release|x64
+		{D3D11109-96D0-4629-88B8-122C0256058C}.Release|x86.ActiveCfg = Release|Win32
+		{D3D11109-96D0-4629-88B8-122C0256058C}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
