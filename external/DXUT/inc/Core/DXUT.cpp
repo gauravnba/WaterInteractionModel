@@ -178,7 +178,7 @@ protected:
         bool  m_MessageWhenD3D11NotAvailable; 
         
         D3D_FEATURE_LEVEL  m_OverrideForceFeatureLevel; // if != -1, then overrid to use a featurelevel
-        WCHAR m_ScreenShotName[512];        // command line screen shot name
+        WCHAR m_ScreenShotName[256];        // command line screen shot name
         bool m_SaveScreenShot;              // command line save screen shot
         bool m_ExitAfterScreenShot;         // command line exit after screen shot
         
@@ -245,16 +245,16 @@ protected:
         void* m_D3D11DeviceDestroyedFuncUserContext;     // user context for D3D11 device destroyed callback
         void* m_D3D11FrameRenderFuncUserContext;         // user context for D3D11 frame render callback
 
-        bool m_Keys[512];                                // array of key state
-        bool m_LastKeys[512];                            // array of last key state
+        bool m_Keys[256];                                // array of key state
+        bool m_LastKeys[256];                            // array of last key state
         bool m_MouseButtons[5];                          // array of mouse states
 
         CGrowableArray<DXUT_TIMER>*  m_TimerList;        // list of DXUT_TIMER structs
-        WCHAR m_StaticFrameStats[512];                   // static part of frames stats 
+        WCHAR m_StaticFrameStats[256];                   // static part of frames stats 
         WCHAR m_FPSStats[64];                            // fps stats
-        WCHAR m_FrameStats[512];                         // frame stats (fps, width, etc)
-        WCHAR m_DeviceStats[512];                        // device stats (description, device type, etc)
-        WCHAR m_WindowTitle[512];                        // window title
+        WCHAR m_FrameStats[256];                         // frame stats (fps, width, etc)
+        WCHAR m_DeviceStats[256];                        // device stats (description, device type, etc)
+        WCHAR m_WindowTitle[256];                        // window title
     };
 
     STATE m_state;
@@ -651,8 +651,10 @@ HWND WINAPI DXUTGetHWNDDeviceWindowed()                    { return GetDXUTState
 RECT WINAPI DXUTGetWindowClientRect()                      { RECT rc; GetClientRect( DXUTGetHWND(), &rc ); return rc; }
 LONG WINAPI DXUTGetWindowWidth()                           { RECT rc = DXUTGetWindowClientRect(); return ((LONG)rc.right - rc.left); }
 LONG WINAPI DXUTGetWindowHeight()                          { RECT rc = DXUTGetWindowClientRect(); return ((LONG)rc.bottom - rc.top); }
+#pragma warning (disable:4838)
 RECT WINAPI DXUTGetWindowClientRectAtModeChange()          { RECT rc = { 0, 0, GetDXUTState().GetWindowBackBufferWidthAtModeChange(), GetDXUTState().GetWindowBackBufferHeightAtModeChange() }; return rc; }
 RECT WINAPI DXUTGetFullsceenClientRectAtModeChange()       { RECT rc = { 0, 0, GetDXUTState().GetFullScreenBackBufferWidthAtModeChange(), GetDXUTState().GetFullScreenBackBufferHeightAtModeChange() }; return rc; }
+#pragma warning (default:4838)
 double WINAPI DXUTGetTime()                                { return GetDXUTState().GetTime(); }
 float WINAPI DXUTGetElapsedTime()                          { return GetDXUTState().GetElapsedTime(); }
 float WINAPI DXUTGetFPS()                                  { return GetDXUTState().GetFPS(); }
@@ -870,7 +872,7 @@ void DXUTParseCommandLine(__inout WCHAR* strCommandLine,
                 {
                     GetDXUTState().SetExitAfterScreenShot( true );
                     GetDXUTState().SetSaveScreenShot( true );
-                    swprintf_s( GetDXUTState().GetScreenShotName(), 512, L"%s.bmp", strFlag );
+                    swprintf_s( GetDXUTState().GetScreenShotName(), 256, L"%s.bmp", strFlag );
                     continue;
                 }
             }
@@ -1128,7 +1130,7 @@ HRESULT WINAPI DXUTCreateWindow( const WCHAR* strWindowTitle, HINSTANCE hInstanc
         AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, ( hMenu != NULL ) ? true : false );
 
         WCHAR* strCachedWindowTitle = GetDXUTState().GetWindowTitle();
-        wcscpy_s( strCachedWindowTitle, 512, strWindowTitle );
+        wcscpy_s( strCachedWindowTitle, 256, strWindowTitle );
 
         // Create the render window
         HWND hWnd = CreateWindow( L"Direct3DWindowClass", strWindowTitle, WS_OVERLAPPEDWINDOW,
@@ -1871,7 +1873,7 @@ HRESULT WINAPI DXUTCreateDevice(D3D_FEATURE_LEVEL reqFL,  bool bWindowed, int nS
         osv.dwOSVersionInfoSize = sizeof(osv);
 #pragma warning (disable: 4996)
         GetVersionEx( (LPOSVERSIONINFO)&osv );
-#pragma warning (default: 4996)
+//#pragma warning (default: 4996)
         
 
         if ( ( osv.dwMajorVersion > 6 )
@@ -3101,7 +3103,7 @@ void DXUTRender3DEnvironment9()
     {
         bool* bLastKeys = GetDXUTState().GetLastKeys();
         bool* bKeys = GetDXUTState().GetKeys();
-        memcpy( bLastKeys, bKeys, sizeof( bool ) * 512 );
+        memcpy( bLastKeys, bKeys, sizeof( bool ) * 256 );
     }
 
     // Update current frame #
@@ -4737,8 +4739,7 @@ void DXUTResizeDXGIBuffers( UINT Width, UINT Height, BOOL bFullScreen )
 
     // Call releasing
     GetDXUTState().SetInsideDeviceCallback( true );
-    LPDXUTCALLBACKD3D11SWAPCHAINRELEASING pCallbackSwapChainReleasing = GetDXUTState().GetD3D11SwapChainReleasingFunc
-        ();
+    LPDXUTCALLBACKD3D11SWAPCHAINRELEASING pCallbackSwapChainReleasing = GetDXUTState().GetD3D11SwapChainReleasingFunc();
     if( pCallbackSwapChainReleasing != NULL )
         pCallbackSwapChainReleasing( GetDXUTState().GetD3D11SwapChainResizedFuncUserContext() );
     GetDXUTState().SetInsideDeviceCallback( false );
@@ -4812,10 +4813,12 @@ void DXUTResizeDXGIBuffers( UINT Width, UINT Height, BOOL bFullScreen )
             hr = DXUTERR_RESETTINGDEVICEOBJECTS;
 
         GetDXUTState().SetInsideDeviceCallback( true );
+#pragma warning (disable:4456)
         LPDXUTCALLBACKD3D11SWAPCHAINRELEASING pCallbackSwapChainReleasing =
             GetDXUTState().GetD3D11SwapChainReleasingFunc();
         if( pCallbackSwapChainReleasing != NULL )
             pCallbackSwapChainReleasing( GetDXUTState().GetD3D11SwapChainResizedFuncUserContext() );
+#pragma warning (default:4456)
         GetDXUTState().SetInsideDeviceCallback( false );
         DXUTPause( false, false );
         PostQuitMessage( 0 );
@@ -5275,7 +5278,7 @@ void DXUTUpdateStaticFrameStats()
         }
 
         WCHAR* pstrStaticFrameStats = GetDXUTState().GetStaticFrameStats();
-        swprintf_s( pstrStaticFrameStats, 512, L"D3D9 %%sVsync %s (%dx%d), %s%s%s",
+        swprintf_s( pstrStaticFrameStats, 256, L"D3D9 %%sVsync %s (%dx%d), %s%s%s",
                          ( pPP->PresentationInterval == D3DPRESENT_INTERVAL_IMMEDIATE ) ? L"off" : L"on",
                          pPP->BackBufferWidth, pPP->BackBufferHeight,
                          strFmt, strDepthFmt, strMultiSample );
@@ -5302,7 +5305,7 @@ void DXUTUpdateStaticFrameStats()
                          pDeviceSettings->d3d11.sd.SampleDesc.Quality );
 
         WCHAR* pstrStaticFrameStats = GetDXUTState().GetStaticFrameStats();
-        swprintf_s( pstrStaticFrameStats, 512, L"D3D11 %%sVsync %s (%dx%d), %s%s",
+        swprintf_s( pstrStaticFrameStats, 256, L"D3D11 %%sVsync %s (%dx%d), %s%s",
                          ( pDeviceSettings->d3d11.SyncInterval == 0 ) ? L"off" : L"on",
                          pDeviceSettings->d3d11.sd.BufferDesc.Width, pDeviceSettings->d3d11.sd.BufferDesc.Height,
                          strFmt, strMultiSample );
@@ -5347,7 +5350,7 @@ LPCWSTR WINAPI DXUTGetFrameStats( bool bShowFPS )
 {
     WCHAR* pstrFrameStats = GetDXUTState().GetFrameStats();
     WCHAR* pstrFPS = ( bShowFPS ) ? GetDXUTState().GetFPSStats() : L"";
-    swprintf_s( pstrFrameStats, 512, GetDXUTState().GetStaticFrameStats(), pstrFPS );
+    swprintf_s( pstrFrameStats, 256, GetDXUTState().GetStaticFrameStats(), pstrFPS );
     return pstrFrameStats;
 }
 
@@ -5364,17 +5367,17 @@ void DXUTUpdateD3D9DeviceStats( D3DDEVTYPE DeviceType, DWORD BehaviorFlags,
     // Store device description
     WCHAR* pstrDeviceStats = GetDXUTState().GetDeviceStats();
     if( DeviceType == D3DDEVTYPE_REF )
-        wcscpy_s( pstrDeviceStats, 512, L"REF" );
+        wcscpy_s( pstrDeviceStats, 256, L"REF" );
     else if( DeviceType == D3DDEVTYPE_HAL )
-        wcscpy_s( pstrDeviceStats, 512, L"HAL" );
+        wcscpy_s( pstrDeviceStats, 256, L"HAL" );
     else if( DeviceType == D3DDEVTYPE_SW )
-        wcscpy_s( pstrDeviceStats, 512, L"SW" );
+        wcscpy_s( pstrDeviceStats, 256, L"SW" );
 
     if( DeviceType == D3DDEVTYPE_HAL )
     {
         // Be sure not to overflow m_strDeviceStats when appending the adapter 
         // description, since it can be long.  
-        wcscat_s( pstrDeviceStats, 512, L": " );
+        wcscat_s( pstrDeviceStats, 256, L": " );
 
         // Try to get a unique description from the CD3D9EnumDeviceSettingsCombo
         DXUTDeviceSettings* pDeviceSettings = GetDXUTState().GetCurrentDeviceSettings();
@@ -5388,7 +5391,7 @@ void DXUTUpdateD3D9DeviceStats( D3DDEVTYPE DeviceType, DWORD BehaviorFlags,
             pDeviceSettings->d3d9.pp.Windowed );
         if( pDeviceSettingsCombo )
         {
-            wcscat_s( pstrDeviceStats, 512, pDeviceSettingsCombo->pAdapterInfo->szUniqueDescription );
+            wcscat_s( pstrDeviceStats, 256, pDeviceSettingsCombo->pAdapterInfo->szUniqueDescription );
         }
         else
         {
@@ -5396,7 +5399,7 @@ void DXUTUpdateD3D9DeviceStats( D3DDEVTYPE DeviceType, DWORD BehaviorFlags,
             WCHAR szDescription[cchDesc];
             MultiByteToWideChar( CP_ACP, 0, pAdapterIdentifier->Description, -1, szDescription, cchDesc );
             szDescription[cchDesc - 1] = 0;
-            wcscat_s( pstrDeviceStats, 512, szDescription );
+            wcscat_s( pstrDeviceStats, 256, szDescription );
         }
     }
 }
@@ -5413,19 +5416,19 @@ void DXUTUpdateD3D11DeviceStats( D3D_DRIVER_TYPE DeviceType, DXGI_ADAPTER_DESC* 
     // Store device description
     WCHAR* pstrDeviceStats = GetDXUTState().GetDeviceStats();
     if( DeviceType == D3D_DRIVER_TYPE_REFERENCE )
-        wcscpy_s( pstrDeviceStats, 512, L"REFERENCE" );
+        wcscpy_s( pstrDeviceStats, 256, L"REFERENCE" );
     else if( DeviceType == D3D_DRIVER_TYPE_HARDWARE )
-        wcscpy_s( pstrDeviceStats, 512, L"HARDWARE" );
+        wcscpy_s( pstrDeviceStats, 256, L"HARDWARE" );
     else if( DeviceType == D3D_DRIVER_TYPE_SOFTWARE )
-        wcscpy_s( pstrDeviceStats, 512, L"SOFTWARE" );
+        wcscpy_s( pstrDeviceStats, 256, L"SOFTWARE" );
     else if( DeviceType == D3D_DRIVER_TYPE_WARP )
-        wcscpy_s( pstrDeviceStats, 512, L"WARP" );
+        wcscpy_s( pstrDeviceStats, 256, L"WARP" );
 
     if( DeviceType == D3D_DRIVER_TYPE_HARDWARE )
     {
         // Be sure not to overflow m_strDeviceStats when appending the adapter 
         // description, since it can be long.  
-        wcscat_s( pstrDeviceStats, 512, L": " );
+        wcscat_s( pstrDeviceStats, 256, L": " );
 
         // Try to get a unique description from the CD3D11EnumDeviceSettingsCombo
         DXUTDeviceSettings* pDeviceSettings = GetDXUTState().GetCurrentDeviceSettings();
@@ -5438,9 +5441,9 @@ void DXUTUpdateD3D11DeviceStats( D3D_DRIVER_TYPE DeviceType, DXGI_ADAPTER_DESC* 
             pDeviceSettings->d3d11.AdapterOrdinal, pDeviceSettings->d3d11.DriverType, pDeviceSettings->d3d11.Output,
             pDeviceSettings->d3d11.sd.BufferDesc.Format, pDeviceSettings->d3d11.sd.Windowed );
         if( pDeviceSettingsCombo )
-            wcscat_s( pstrDeviceStats, 512, pDeviceSettingsCombo->pAdapterInfo->szUniqueDescription );
+            wcscat_s( pstrDeviceStats, 256, pDeviceSettingsCombo->pAdapterInfo->szUniqueDescription );
         else
-            wcscat_s( pstrDeviceStats, 512, pAdapterDesc->Description );
+            wcscat_s( pstrDeviceStats, 256, pAdapterDesc->Description );
     }
 }
 

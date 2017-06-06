@@ -295,7 +295,7 @@ private:
         if( m_MemorySize > iElements )
             return true;
 
-        T* pTemp = new T[ ( size_t )( iElements * 2 + 512 ) ];
+        T* pTemp = new T[ ( size_t )( iElements * 2 + 256 ) ];
         if( !pTemp )
             return false;
 

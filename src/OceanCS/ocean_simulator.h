@@ -1,173 +1,136 @@
-//--------------------------------------------------------------------------------------
-// File: ocean_simulator.h
+// Copyright (c) 2011 NVIDIA Corporation. All rights reserved.
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
-//--------------------------------------------------------------------------------------
+// TO  THE MAXIMUM  EXTENT PERMITTED  BY APPLICABLE  LAW, THIS SOFTWARE  IS PROVIDED
+// *AS IS*  AND NVIDIA AND  ITS SUPPLIERS DISCLAIM  ALL WARRANTIES,  EITHER  EXPRESS
+// OR IMPLIED, INCLUDING, BUT NOT LIMITED  TO, NONINFRINGEMENT,IMPLIED WARRANTIES OF
+// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  IN NO EVENT SHALL  NVIDIA 
+// OR ITS SUPPLIERS BE  LIABLE  FOR  ANY  DIRECT, SPECIAL,  INCIDENTAL,  INDIRECT,  OR  
+// CONSEQUENTIAL DAMAGES WHATSOEVER (INCLUDING, WITHOUT LIMITATION,  DAMAGES FOR LOSS 
+// OF BUSINESS PROFITS, BUSINESS INTERRUPTION, LOSS OF BUSINESS INFORMATION, OR ANY 
+// OTHER PECUNIARY LOSS) ARISING OUT OF THE  USE OF OR INABILITY  TO USE THIS SOFTWARE, 
+// EVEN IF NVIDIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+//
+// Please direct any bugs or questions to SDKFeedback@nvidia.com
 
 #ifndef _OCEAN_WAVE_H
 #define _OCEAN_WAVE_H
 
 #include <D3DX11.h>
-#include <amp.h>
+
 #include "CSFFT/fft_512x512.h"
 
-using std::vector;
-using namespace concurrency;
-
+//#define CS_DEBUG_BUFFER
 #define PAD16(n) (((n)+15)/16*16)
 
-#define PI 3.1415926536f
-#define BLOCK_SIZE_X 16
-#define BLOCK_SIZE_Y 16
-
-#define H0_LEN 0x205020
-#define OMEGA_LEN 0x102810
-#define RUNALL_TEST_TIME_LEN 10
-
-struct ocean_parameter
+struct OceanParameter
 {
-    ocean_parameter () 
-    {
-        // The size of displacement map. In this sample, it's fixed to 512.
-        dmap_dim = 512;
-        // The side length (world space) of square sized patch
-        patch_length  = 2000.0f;
-        // Adjust this parameter to control the simulation speed
-        time_scale = 0.8f;
-        // A scale to control the amplitude. Not the world space height
-        wave_amplitude = 0.35f;
-        // 2D wind direction. No need to be normalized
-        wind_dir = D3DXVECTOR2(0.8f, 0.6f);
-        // The bigger the wind speed, the larger scale of wave crest.
-        // But the wave scale can be no larger than patch_length
-        wind_speed = 600.0f;
-        // Damp out the components opposite to wind direction.
-        // The smaller the value, the higher wind dependency
-        wind_dependency = 0.07f;
-        // Control the scale of horizontal movement. Higher value creates
-        // pointy crests.
-        choppy_scale = 1.3f;
-    }
-    // Must be power of 2.
-    int dmap_dim;
-    // Typical value is 1000 ~ 2000
-    float patch_length;
+	// Must be power of 2.
+	int dmap_dim;
+	// Typical value is 1000 ~ 2000
+	float patch_length;
 
-    // Adjust the time interval for simulation.
-    float time_scale;
-    // Amplitude for transverse wave. Around 1.0
-    float wave_amplitude;
-    // Wind direction. Normalization not required.
-    D3DXVECTOR2 wind_dir;
-    // Around 100 ~ 1000
-    float wind_speed;
-    // This value damps out the waves against the wind direction.
-    // Smaller value means higher wind dependency.
-    float wind_dependency;
-    // The amplitude for longitudinal wave. Must be positive.
-    float choppy_scale;
+	// Adjust the time interval for simulation.
+	float time_scale;
+	// Amplitude for transverse wave. Around 1.0
+	float wave_amplitude;
+	// Wind direction. Normalization not required.
+	D3DXVECTOR2 wind_dir;
+	// Around 100 ~ 1000
+	float wind_speed;
+	// This value damps out the waves against the wind direction.
+	// Smaller value means higher wind dependency.
+	float wind_dependency;
+	// The amplitude for longitudinal wave. Must be positive.
+	float choppy_scale;
 };
 
-struct immutable
-{
-    unsigned int actualdim;
-    unsigned int inwidth;
-    unsigned int outwidth;
-    unsigned int outheight;
-    unsigned int dddressoffset;
-    unsigned int addressoffset;
-};
 
-struct change_per_frame
-{
-    float time;
-    float choppyscale;
-};
-
-class ocean_simulator
+class OceanSimulator
 {
 public:
-    ocean_simulator(ocean_parameter& params, ID3D11Device* pd3dDevice);
-    ~ocean_simulator();
+	OceanSimulator(OceanParameter& params, ID3D11Device* pd3dDevice);
+	~OceanSimulator();
 
-    // -------------------------- Initialization & simulation routines ------------------------
+	// -------------------------- Initialization & simulation routines ------------------------
 
-    // Update ocean wave when tick arrives.
-    void update_displacement_map(float time);
+	// Update ocean wave when tick arrives.
+	void updateDisplacementMap(float time);
 
-    // Texture access
-    ID3D11ShaderResourceView* get_direct3d_displacement_map();
-    ID3D11ShaderResourceView* get_direct3d_gradient_map();
+	// Texture access
+	ID3D11ShaderResourceView* getD3D11DisplacementMap();
+	ID3D11ShaderResourceView* getD3D11GradientMap();
 
-    const ocean_parameter& get_parameters();
+	const OceanParameter& getParameters();
 
 
 protected:
-    inline void direct3d_synchronize();
+	OceanParameter m_param;
 
-    ocean_parameter m_param;
+	// ---------------------------------- GPU shading asset -----------------------------------
 
-    // ---------------------------------- GPU shading asset -----------------------------------
+	// D3D objects
+	ID3D11Device* m_pd3dDevice;
+	ID3D11DeviceContext* m_pd3dImmediateContext;
+	
+	// Displacement map
+	ID3D11Texture2D* m_pDisplacementMap;		// (RGBA32F)
+	ID3D11ShaderResourceView* m_pDisplacementSRV;
+	ID3D11RenderTargetView* m_pDisplacementRTV;
 
-    // D3D objects
-    ID3D11Device* m_pd3dDevice;
-    ID3D11DeviceContext* m_pd3dImmediateContext;
+	// Gradient field
+	ID3D11Texture2D* m_pGradientMap;			// (RGBA16F)
+	ID3D11ShaderResourceView* m_pGradientSRV;
+	ID3D11RenderTargetView* m_pGradientRTV;
 
-    // accelerator_view
-    accelerator_view m_av;
+	// Samplers
+	ID3D11SamplerState* m_pPointSamplerState;
 
-    // Displacement map
-    ID3D11Texture2D* m_pDisplacementMap;		// (RGBA32F)
-    ID3D11ShaderResourceView* m_pDisplacementSRV;
-    ID3D11RenderTargetView* m_pDisplacementRTV;
+	// Initialize the vector field.
+	void initHeightMap(OceanParameter& params, D3DXVECTOR2* out_h0, float* out_omega);
 
-    // Gradient Field
-    ID3D11Texture2D* m_pGradientMap;			// (RGBA16F)
-    ID3D11ShaderResourceView* m_pGradientSRV;
-    ID3D11RenderTargetView* m_pGradientRTV;
 
-    // Samplers
-    ID3D11SamplerState* m_pPointSamplerState;
+	// ----------------------------------- CS simulation data ---------------------------------
 
-    // Initialize the vector Field.
-    void init_height_map(ocean_parameter& params, vector<float_2> &out_h0, vector<float> &out_omega);
+	// Initial height field H(0) generated by Phillips spectrum & Gauss distribution.
+	ID3D11Buffer* m_pBuffer_Float2_H0;
+	ID3D11UnorderedAccessView* m_pUAV_H0;
+	ID3D11ShaderResourceView* m_pSRV_H0;
 
-    void init_buffers(ocean_parameter& params, vector<float_2> &h0_data, vector<float> &omega_data, vector<float_2> &zero_data);
+	// Angular frequency
+	ID3D11Buffer* m_pBuffer_Float_Omega;
+	ID3D11UnorderedAccessView* m_pUAV_Omega;
+	ID3D11ShaderResourceView* m_pSRV_Omega;
 
-    void init_dx11(int hmap_dim, int output_size, UINT float2_stride);
-    // ----------------------------------- CS simulation data ---------------------------------
+	// Height field H(t), choppy field Dx(t) and Dy(t) in frequency domain, updated each frame.
+	ID3D11Buffer* m_pBuffer_Float2_Ht;
+	ID3D11UnorderedAccessView* m_pUAV_Ht;
+	ID3D11ShaderResourceView* m_pSRV_Ht;
 
-    // Initial height array H(0) generated by phillips spectrum & gauss distribution.
-    array_view<const float_2> *m_array_view_float2_h0;
+	// Height & choppy buffer in the space domain, corresponding to H(t), Dx(t) and Dy(t)
+	ID3D11Buffer* m_pBuffer_Float_Dxyz;
+	ID3D11UnorderedAccessView* m_pUAV_Dxyz;
+	ID3D11ShaderResourceView* m_pSRV_Dxyz;
 
-    // Angular frequency
-    array_view<const float> *m_array_view_float_omega;
+	ID3D11Buffer* m_pQuadVB;
 
-    // Height array H(t), choppy array Dx(t) and Dy(t) in frequency domain, updated each frame.
-    array_view<float_2> *m_array_view_float2_ht;
+	// Shaders, layouts and constants
+	ID3D11ComputeShader* m_pUpdateSpectrumCS;
 
-    // Height & choppy buffer in the space domain, corresponding to H(t), Dx(t) and Dy(t)
-    ID3D11Buffer* m_pBuffer_Float_Dxyz;
-    ID3D11UnorderedAccessView* m_pUAV_Dxyz;
-    ID3D11ShaderResourceView* m_pSRV_Dxyz;
-    array_view<float_2> *m_array_view_float_dxyz;
+	ID3D11VertexShader* m_pQuadVS;
+	ID3D11PixelShader* m_pUpdateDisplacementPS;
+	ID3D11PixelShader* m_pGenGradientFoldingPS;
 
-    ID3D11Buffer* m_pQuadVB;
+	ID3D11InputLayout* m_pQuadLayout;
 
-    // Shaders, layouts and constants
-    ID3D11VertexShader* m_pQuadVS;
-    ID3D11PixelShader* m_pUpdateDisplacementPS;
-    ID3D11PixelShader* m_pGenGradientFoldingPS;
+	ID3D11Buffer* m_pImmutableCB;
+	ID3D11Buffer* m_pPerFrameCB;
 
-    ID3D11InputLayout* m_pQuadLayout;
+	// FFT wrap-up
+	CSFFT512x512_Plan m_fft_plan;
 
-    ID3D11Buffer* m_pImmutableCB;
-    immutable m_cbimmutable;
-    ID3D11Buffer* m_pPerFrameCB;
-    change_per_frame m_cbchange_per_frame;
-
-    // FFT wrap-up
-    csfft512x512_plan m_fft_plan;
+#ifdef CS_DEBUG_BUFFER
+	ID3D11Buffer* m_pDebugBuffer;
+#endif
 };
 
 #endif	// _OCEAN_WAVE_H

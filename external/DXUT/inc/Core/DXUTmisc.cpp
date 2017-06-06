@@ -1186,7 +1186,7 @@ void WINAPI DXUTGetDesktopResolution( UINT AdapterOrdinal, UINT* pWidth, UINT* p
 {
     DXUTDeviceSettings DeviceSettings = DXUTGetDeviceSettings();
 
-    WCHAR strDeviceName[512] = {0};
+    WCHAR strDeviceName[256] = {0};
     DEVMODE devMode;
     ZeroMemory( &devMode, sizeof( DEVMODE ) );
     devMode.dmSize = sizeof( DEVMODE );
@@ -1197,7 +1197,7 @@ void WINAPI DXUTGetDesktopResolution( UINT AdapterOrdinal, UINT* pWidth, UINT* p
         CD3D9EnumAdapterInfo* pAdapterInfo = pd3dEnum->GetAdapterInfo( AdapterOrdinal );
         if( pAdapterInfo )
         {
-            MultiByteToWideChar( CP_ACP, 0, pAdapterInfo->AdapterIdentifier.DeviceName, -1, strDeviceName, 512 );
+            MultiByteToWideChar( CP_ACP, 0, pAdapterInfo->AdapterIdentifier.DeviceName, -1, strDeviceName, 256 );
             strDeviceName[255] = 0;
         }
     }
@@ -1208,7 +1208,7 @@ void WINAPI DXUTGetDesktopResolution( UINT AdapterOrdinal, UINT* pWidth, UINT* p
         CD3D11EnumOutputInfo* pOutputInfo = pd3dEnum->GetOutputInfo( AdapterOrdinal, DeviceSettings.d3d11.Output );
         if( pOutputInfo )
         {
-            wcscpy_s( strDeviceName, 512, pOutputInfo->Desc.DeviceName );
+            wcscpy_s( strDeviceName, 256, pOutputInfo->Desc.DeviceName );
         }
     }
 
@@ -1230,7 +1230,7 @@ HRESULT WINAPI DXUTTrace( const CHAR* strFile, DWORD dwLine, HRESULT hr,
     if( bPopMsgBox && bShowMsgBoxOnError == false )
         bPopMsgBox = false;
 
-#define BUFFER_LEN	512
+#define BUFFER_LEN	256
 	WCHAR *complete_msg = new WCHAR[BUFFER_LEN];
 	WCHAR *wc_strFile = NULL;
 	DWORD dwRes = ::MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED , strFile, strlen(strFile), NULL, 0);

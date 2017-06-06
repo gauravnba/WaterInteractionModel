@@ -3,7 +3,6 @@
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
-
 #include "DXUT.h"
 #include "DXUTgui.h"
 #include "DXUTsettingsDlg.h"
@@ -1028,10 +1027,10 @@ HRESULT CDXUTDialog::OnRender9( float fElapsedTime )
         };
         DrawSprite9( &m_CapElement, &rc );
         rc.left += 5; // Make a left margin
-        WCHAR wszOutput[512];
-        wcscpy_s( wszOutput, 512, m_wszCaption );
+        WCHAR wszOutput[256];
+        wcscpy_s( wszOutput, 256, m_wszCaption );
         if( m_bMinimized )
-            wcscat_s( wszOutput, 512, L" (Minimized)" );
+            wcscat_s( wszOutput, 256, L" (Minimized)" );
         DrawText9( wszOutput, &m_CapElement, &rc, true );
     }
 
@@ -1147,10 +1146,10 @@ HRESULT CDXUTDialog::OnRender11( float fElapsedTime )
         RECT rc = { 0, -m_nCaptionHeight, m_width, 0 };
         DrawSprite11( &m_CapElement, &rc, 0.99f );
         rc.left += 5; // Make a left margin
-        WCHAR wszOutput[512];
-        wcscpy_s( wszOutput, 512, m_wszCaption );
+        WCHAR wszOutput[256];
+        wcscpy_s( wszOutput, 256, m_wszCaption );
         if( m_bMinimized )
-            wcscat_s( wszOutput, 512, L" (Minimized)" );
+            wcscat_s( wszOutput, 256, L" (Minimized)" );
         DrawText11( pd3dDevice, pd3dDeviceContext, wszOutput, &m_CapElement, &rc, true );
     }
 
@@ -4598,7 +4597,7 @@ HRESULT CDXUTComboBox::AddItem( const WCHAR* strText, void* pData )
     }
 
     ZeroMemory( pItem, sizeof( DXUTComboBoxItem ) );
-    wcscpy_s( pItem->strText, 512, strText );
+    wcscpy_s( pItem->strText, 256, strText );
     pItem->pData = pData;
 
     m_Items.Add( pItem );
@@ -5468,7 +5467,7 @@ HRESULT CDXUTListBox::AddItem( const WCHAR* wszText, void* pData )
     if( !pNewItem )
         return E_OUTOFMEMORY;
 
-    wcscpy_s( pNewItem->strText, 512, wszText );
+    wcscpy_s( pNewItem->strText, 256, wszText );
     pNewItem->pData = pData;
     SetRect( &pNewItem->rcActive, 0, 0, 0, 0 );
     pNewItem->bSelected = false;
@@ -5494,7 +5493,7 @@ HRESULT CDXUTListBox::InsertItem( int nIndex, const WCHAR* wszText, void* pData 
     if( !pNewItem )
         return E_OUTOFMEMORY;
 
-    wcscpy_s( pNewItem->strText, 512, wszText );
+    wcscpy_s( pNewItem->strText, 256, wszText );
     pNewItem->pData = pData;
     SetRect( &pNewItem->rcActive, 0, 0, 0, 0 );
     pNewItem->bSelected = false;
@@ -6854,7 +6853,7 @@ bool CUniBuffer::SetBufferSize( int nNewSize )
         return false;
 
     int nAllocateSize = ( nNewSize == -1 || nNewSize < m_nBufferSize * 2 ) ? ( m_nBufferSize ? m_nBufferSize *
-                                                                               2 : 512 ) : nNewSize * 2;
+                                                                               2 : 256 ) : nNewSize * 2;
 
     // Cap the buffer size at the maximum allowed.
     if( nAllocateSize > DXUT_MAX_EDITBOXLENGTH )
@@ -7233,9 +7232,9 @@ void DXUTBlendColor::Blend( UINT iState, float fElapsedTime, float fRate )
 
 
 //--------------------------------------------------------------------------------------
-void CDXUTElement::SetTexture( UINT iTexture, RECT* prcTexture, D3DCOLOR defaultTextureColor )
+void CDXUTElement::SetTexture( UINT texture, RECT* prcTexture, D3DCOLOR defaultTextureColor )
 {
-    this->iTexture = iTexture;
+    this->iTexture = texture;
 
     if( prcTexture )
         rcTexture = *prcTexture;
@@ -7247,10 +7246,10 @@ void CDXUTElement::SetTexture( UINT iTexture, RECT* prcTexture, D3DCOLOR default
 
 
 //--------------------------------------------------------------------------------------
-void CDXUTElement::SetFont( UINT iFont, D3DCOLOR defaultFontColor, DWORD dwTextFormat )
+void CDXUTElement::SetFont( UINT font, D3DCOLOR defaultFontColor, DWORD textFormat )
 {
-    this->iFont = iFont;
-    this->dwTextFormat = dwTextFormat;
+    this->iFont = font;
+    this->dwTextFormat = textFormat;
 
     FontColor.Init( defaultFontColor );
 }

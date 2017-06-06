@@ -1,23 +1,19 @@
-//--------------------------------------------------------------------------------------
-// File: NBodyGravityCS11.cpp
+// Copyright (c) 2011 NVIDIA Corporation. All rights reserved.
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
-//--------------------------------------------------------------------------------------
-
-/*
- * Copyright 1993-2010 NVIDIA Corporation.  All rights reserved.
- *
- * Please refer to the NVIDIA end user license agreement (EULA) associated
- * with this source code for terms and conditions that govern your use of
- * this software. Any use, reproduction, disclosure, or distribution of
- * this software and related documentation outside the terms of the EULA
- * is strictly prohibited.
- *
- */
+// TO  THE MAXIMUM  EXTENT PERMITTED  BY APPLICABLE  LAW, THIS SOFTWARE  IS PROVIDED
+// *AS IS*  AND NVIDIA AND  ITS SUPPLIERS DISCLAIM  ALL WARRANTIES,  EITHER  EXPRESS
+// OR IMPLIED, INCLUDING, BUT NOT LIMITED  TO, NONINFRINGEMENT,IMPLIED WARRANTIES OF
+// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  IN NO EVENT SHALL  NVIDIA 
+// OR ITS SUPPLIERS BE  LIABLE  FOR  ANY  DIRECT, SPECIAL,  INCIDENTAL,  INDIRECT,  OR  
+// CONSEQUENTIAL DAMAGES WHATSOEVER (INCLUDING, WITHOUT LIMITATION,  DAMAGES FOR LOSS 
+// OF BUSINESS PROFITS, BUSINESS INTERRUPTION, LOSS OF BUSINESS INFORMATION, OR ANY 
+// OTHER PECUNIARY LOSS) ARISING OUT OF THE  USE OF OR INABILITY  TO USE THIS SOFTWARE, 
+// EVEN IF NVIDIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+//
+// Please direct any bugs or questions to SDKFeedback@nvidia.com
 
 #include "DXUT.h"
-#include "skybox.h"
-#include "utilities.h"
+#include "skybox11.h"
 
 HRESULT CompileShaderFromFile( WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut );
 
@@ -48,10 +44,10 @@ CSkybox11::CSkybox11()
 }
 
 HRESULT CSkybox11::OnD3D11CreateDevice( ID3D11Device* pd3dDevice, float fSize, 
-    ID3D11Texture2D* pCubeTexture, ID3D11ShaderResourceView* pCubeRV )
+                                        ID3D11Texture2D* pCubeTexture, ID3D11ShaderResourceView* pCubeRV )
 {
     HRESULT hr;
-
+    
     m_pd3dDevice11 = pd3dDevice;
     m_fSize = fSize;
     m_pEnvironmentMap11 = pCubeTexture;
@@ -61,18 +57,15 @@ HRESULT CSkybox11::OnD3D11CreateDevice( ID3D11Device* pd3dDevice, float fSize,
     ID3DBlob* pBlobPS = NULL;
 
     // Create the shaders
-    tstring filePath = GetFilePath::GetFilePath(_T("skybox.hlsl"));
-    //    V_RETURN( CompileShaderFromFile( L"skybox11.hlsl", "SkyboxVS", "vs_4_0", &pBlobVS ) );
-    //    V_RETURN( CompileShaderFromFile( L"skybox11.hlsl", "SkyboxPS", "ps_4_0", &pBlobPS ) );
-    V_RETURN( CompileShaderFromFile( (WCHAR *)filePath.c_str(), "SkyboxVS", "vs_4_0", &pBlobVS ) );
-    V_RETURN( CompileShaderFromFile( (WCHAR *)filePath.c_str(), "SkyboxPS", "ps_4_0", &pBlobPS ) );
+    V_RETURN( CompileShaderFromFile( L"skybox11.hlsl", "SkyboxVS", "vs_4_0", &pBlobVS ) );
+    V_RETURN( CompileShaderFromFile( L"skybox11.hlsl", "SkyboxPS", "ps_4_0", &pBlobPS ) );
 
     V_RETURN( pd3dDevice->CreateVertexShader( pBlobVS->GetBufferPointer(), pBlobVS->GetBufferSize(), NULL, &m_pVertexShader ) );
     V_RETURN( pd3dDevice->CreatePixelShader( pBlobPS->GetBufferPointer(), pBlobPS->GetBufferSize(), NULL, &m_pPixelShader ) );
 
     // Create an input layout
     V_RETURN( pd3dDevice->CreateInputLayout( g_aVertexLayout, 1, pBlobVS->GetBufferPointer(),
-        pBlobVS->GetBufferSize(), &m_pVertexLayout11 ) );
+                                             pBlobVS->GetBufferSize(), &m_pVertexLayout11 ) );
 
     SAFE_RELEASE( pBlobVS );
     SAFE_RELEASE( pBlobPS );
@@ -92,7 +85,7 @@ HRESULT CSkybox11::OnD3D11CreateDevice( ID3D11Device* pd3dDevice, float fSize,
     SamDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
     SamDesc.BorderColor[0] = SamDesc.BorderColor[1] = SamDesc.BorderColor[2] = SamDesc.BorderColor[3] = 0;
     SamDesc.MinLOD = 0;
-    SamDesc.MaxLOD = 0;
+    SamDesc.MaxLOD = D3D11_FLOAT32_MAX;
     V_RETURN( pd3dDevice->CreateSamplerState( &SamDesc, &m_pSam ) );  
 
     // Setup constant buffer
@@ -103,7 +96,7 @@ HRESULT CSkybox11::OnD3D11CreateDevice( ID3D11Device* pd3dDevice, float fSize,
     Desc.MiscFlags = 0;
     Desc.ByteWidth = sizeof( CB_VS_PER_OBJECT );
     V_RETURN( pd3dDevice->CreateBuffer( &Desc, NULL, &m_pcbVSPerObject ) );
-
+    
     // Depth stencil state
     D3D11_DEPTH_STENCIL_DESC DSDesc;
     ZeroMemory( &DSDesc, sizeof( D3D11_DEPTH_STENCIL_DESC ) );
@@ -133,7 +126,7 @@ void CSkybox11::OnD3D11ResizedSwapChain( const DXGI_SURFACE_DESC* pBackBufferSur
     float fHighH = -1.0f - ( 1.0f / ( float )pBackBufferSurfaceDesc->Height );
     float fLowW = 1.0f + ( 1.0f / ( float )pBackBufferSurfaceDesc->Width );
     float fLowH = 1.0f + ( 1.0f / ( float )pBackBufferSurfaceDesc->Height );
-
+    
     pVertex[0].pos = D3DXVECTOR4( fLowW, fLowH, 1.0f, 1.0f );
     pVertex[1].pos = D3DXVECTOR4( fLowW, fHighH, 1.0f, 1.0f );
     pVertex[2].pos = D3DXVECTOR4( fHighW, fLowH, 1.0f, 1.0f );
@@ -157,7 +150,7 @@ void CSkybox11::OnD3D11ResizedSwapChain( const DXGI_SURFACE_DESC* pBackBufferSur
 void CSkybox11::D3D11Render( D3DXMATRIX* pmWorldViewProj, ID3D11DeviceContext* pd3dImmediateContext )
 {
     HRESULT hr;
-
+    
     pd3dImmediateContext->IASetInputLayout( m_pVertexLayout11 );
 
     UINT uStrides = sizeof( SKYBOX_VERTEX );

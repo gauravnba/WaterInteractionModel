@@ -377,7 +377,7 @@ private:
     bool m_bCaption;
     bool m_bMinimized;
     bool m_bDrag;
-    WCHAR               m_wszCaption[512];
+    WCHAR               m_wszCaption[256];
 
     int m_x;
     int m_y;
@@ -937,7 +937,7 @@ protected:
 //-----------------------------------------------------------------------------
 struct DXUTListBoxItem
 {
-    WCHAR strText[512];
+    WCHAR strText[256];
     void* pData;
 
     RECT rcActive;
@@ -1029,7 +1029,7 @@ protected:
 //-----------------------------------------------------------------------------
 struct DXUTComboBoxItem
 {
-    WCHAR strText[512];
+    WCHAR strText[256];
     void* pData;
 
     RECT rcActive;

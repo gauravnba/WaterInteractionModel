@@ -255,7 +255,7 @@ HRESULT CD3D9Enumeration::Enumerate( LPDXUTCALLBACKISD3D9DEVICEACCEPTABLE IsD3D9
         {
             WCHAR sz[100];
             swprintf_s( sz, 100, L" (#%d)", pAdapterInfo->AdapterOrdinal );
-            wcscat_s( pAdapterInfo->szUniqueDescription, 512, sz );
+            wcscat_s( pAdapterInfo->szUniqueDescription, 256, sz );
 
         }
     }

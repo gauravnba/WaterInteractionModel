@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by OceanCS.rc
+// Used by HDRToneMappingCS11.rc
 //
 #define IDI_MAIN_ICON                   101
 

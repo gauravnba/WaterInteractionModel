@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{ecb7dfbe-cfa5-42c6-8162-afa90708208b}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="CSFFT">
+      <UniqueIdentifier>{17f977a3-fddd-4bd9-b8d5-5ac31cec94a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DXUT">
+      <UniqueIdentifier>{ff8ba0de-98b9-4b44-857e-c6a8fd2581b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DXUT\Core">
+      <UniqueIdentifier>{d3d49ec8-11cd-4d1e-8184-e73d19b6bafd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DXUT\Optional">
+      <UniqueIdentifier>{a2979c9d-787c-498d-b09e-24822a1e56fe}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Common\DXUT\Optional\directx.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\external\DXUT\inc\Optional\directx.ico">
+      <Filter>DXUT\Optional</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="OceanCS.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CSFFT\fft_512x512.h">
+      <Filter>CSFFT</Filter>
+    </ClInclude>
+    <ClInclude Include="ocean_simulator.h" />
+    <ClInclude Include="..\..\external\DXUT\inc\Optional\DXUTlockfreepipe.h">
+      <Filter>DXUT\Optional</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\DXUT\inc\Optional\DXUTsettingsdlg.h">
+      <Filter>DXUT\Optional</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\DXUT\inc\Core\DXUT.h">
+      <Filter>DXUT\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\DXUT\inc\Core\DXUTDevice9.h">
+      <Filter>DXUT\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\DXUT\inc\Core\DXUTDevice11.h">
+      <Filter>DXUT\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\DXUT\inc\Core\DXUTmisc.h">
+      <Filter>DXUT\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\DXUT\inc\Optional\DXUTcamera.h">
+      <Filter>DXUT\Optional</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\DXUT\inc\Optional\DXUTgui.h">
+      <Filter>DXUT\Optional</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\DXUT\inc\Optional\DXUTres.h">
+      <Filter>DXUT\Optional</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\DXUT\inc\Optional\SDKmesh.h">
+      <Filter>DXUT\Optional</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\DXUT\inc\Optional\SDKmisc.h">
+      <Filter>DXUT\Optional</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CSFFT\fft_512x512_c2c.cpp">
+      <Filter>CSFFT</Filter>
+    </ClCompile>
+    <ClCompile Include="ocean_simulator.cpp" />
+    <ClCompile Include="render.cpp" />
+    <ClCompile Include="skybox11.cpp" />
+    <ClCompile Include="..\..\external\DXUT\inc\Core\DXUT.cpp">
+      <Filter>DXUT\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\DXUT\inc\Core\DXUTDevice9.cpp">
+      <Filter>DXUT\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\DXUT\inc\Core\DXUTDevice11.cpp">
+      <Filter>DXUT\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\DXUT\inc\Core\DXUTmisc.cpp">
+      <Filter>DXUT\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\DXUT\inc\Optional\DXUTcamera.cpp">
+      <Filter>DXUT\Optional</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\DXUT\inc\Optional\DXUTgui.cpp">
+      <Filter>DXUT\Optional</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\DXUT\inc\Optional\DXUTres.cpp">
+      <Filter>DXUT\Optional</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\DXUT\inc\Optional\DXUTsettingsdlg.cpp">
+      <Filter>DXUT\Optional</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\DXUT\inc\Optional\SDKmesh.cpp">
+      <Filter>DXUT\Optional</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\DXUT\inc\Optional\SDKmisc.cpp">
+      <Filter>DXUT\Optional</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="CSFFT\fft_512x512_c2c.hlsl">
+      <Filter>CSFFT</Filter>
+    </FxCompile>
+    <FxCompile Include="ocean_simulator_cs.hlsl" />
+    <FxCompile Include="ocean_simulator_vs_ps.hlsl" />
+    <FxCompile Include="skybox11.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="ocean_shading.hlsl" />
+  </ItemGroup>
+</Project>

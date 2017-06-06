@@ -1,82 +1,63 @@
-//--------------------------------------------------------------------------------------
-// File: fft_512x512.h
+// Copyright (c) 2011 NVIDIA Corporation. All rights reserved.
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
-//--------------------------------------------------------------------------------------
+// TO  THE MAXIMUM  EXTENT PERMITTED  BY APPLICABLE  LAW, THIS SOFTWARE  IS PROVIDED
+// *AS IS*  AND NVIDIA AND  ITS SUPPLIERS DISCLAIM  ALL WARRANTIES,  EITHER  EXPRESS
+// OR IMPLIED, INCLUDING, BUT NOT LIMITED  TO, NONINFRINGEMENT,IMPLIED WARRANTIES OF
+// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  IN NO EVENT SHALL  NVIDIA 
+// OR ITS SUPPLIERS BE  LIABLE  FOR  ANY  DIRECT, SPECIAL,  INCIDENTAL,  INDIRECT,  OR  
+// CONSEQUENTIAL DAMAGES WHATSOEVER (INCLUDING, WITHOUT LIMITATION,  DAMAGES FOR LOSS 
+// OF BUSINESS PROFITS, BUSINESS INTERRUPTION, LOSS OF BUSINESS INFORMATION, OR ANY 
+// OTHER PECUNIARY LOSS) ARISING OUT OF THE  USE OF OR INABILITY  TO USE THIS SOFTWARE, 
+// EVEN IF NVIDIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+//
+// Please direct any bugs or questions to SDKFeedback@nvidia.com
 
-#ifndef _FFT_512_512_H
-#define _FFT_512_512_H
-
-#include <amp.h>
-#include <amp_math.h>
-#include <amp_short_vectors.h>
 #include "DXUT.h"
 
-using namespace concurrency;
-using namespace concurrency::graphics;
 
-////////////////////////////////////////////////////////////////////////////////
-// Common constants
-////////////////////////////////////////////////////////////////////////////////
-#define TWO_PI 6.283185307179586476925286766559
-#define MAX_BUF_LEN 0x600000
-#define COS_PI_4_16 0.70710678118654752440084436210485f
-#define TWIDDLE_1_8 COS_PI_4_16, -COS_PI_4_16
-#define TWIDDLE_3_8 -COS_PI_4_16, -COS_PI_4_16
+//Memory access coherency (in threads)
+#define COHERENCY_GRANULARITY 128
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Common types
 ///////////////////////////////////////////////////////////////////////////////
 
-struct change_percall
+typedef struct CSFFT_512x512_Data_t
 {
-    unsigned int thread_count;
-    unsigned int ostride;
-    unsigned int istride;
-    unsigned int pstride;
-    float phase_base;
-};
+	// D3D11 objects
+	ID3D11DeviceContext* pd3dImmediateContext;
+	ID3D11ComputeShader* pRadix008A_CS;
+	ID3D11ComputeShader* pRadix008A_CS2;
 
-class csfft512x512_plan
-{
-public:
-    // Constructor
-    csfft512x512_plan(UINT slices, accelerator_view av)
-        : m_slices(slices), 
-        m_av(av),
-        m_tmp_array_view(array<float_2>((MAX_BUF_LEN / sizeof(float_2)), av))
-    {
-        create_input();
-    }
+	// More than one array can be transformed at same time
+	UINT slices;
 
-    void fft_512x512_c2c_amp(array_view<float_2> dst, array_view<const float_2> src);
+	// For 512x512 config, we need 6 constant buffers
+	ID3D11Buffer* pRadix008A_CB[6];
 
-private:
-    void radix008A_amp(array_view<float_2> dst,
-        array_view<const float_2> src,
-        UINT thread_count,
-        UINT istride,
-        change_percall change_percall);
+	// Temporary buffers
+	ID3D11Buffer* pBuffer_Tmp;
+	ID3D11UnorderedAccessView* pUAV_Tmp;
+	ID3D11ShaderResourceView* pSRV_Tmp;
+} CSFFT512x512_Plan;
 
-    static void ft2(float_2 &a, float_2 &b) restrict(amp);
-    static void cmul_forward(float_2 &a, float bx, float by) restrict(amp);
-    static void upd_forward(float_2 &a, float_2 &b) restrict(amp);
-    static void fft_forward_4(float_2 complex_num[8]) restrict(amp);
-    static void fft_forward_8(float_2 complex_num[8]) restrict(amp);
-    static void twiddle(float_2 &d, float phase) restrict(amp);
-    static void twiddle_8(float_2 complex_num[8], float phase) restrict(amp);
+////////////////////////////////////////////////////////////////////////////////
+// Common constants
+////////////////////////////////////////////////////////////////////////////////
+#define TWO_PI 6.283185307179586476925286766559
 
-    void create_input();
+#define FFT_DIMENSIONS 3U
+#define FFT_PLAN_SIZE_LIMIT (1U << 27)
 
-    UINT m_slices;
+#define FFT_FORWARD -1
+#define FFT_INVERSE 1
 
-    // For 512x512 config, we need 6 buffers
-    change_percall m_change_percall[6];
 
-    // Temp data
-    array_view<float_2> m_tmp_array_view;
+void fft512x512_create_plan(CSFFT512x512_Plan* plan, ID3D11Device* pd3dDevice, UINT slices);
+void fft512x512_destroy_plan(CSFFT512x512_Plan* plan);
 
-    accelerator_view m_av;
-};
-
-#endif
+void fft_512x512_c2c(CSFFT512x512_Plan* fft_plan, 
+					 ID3D11UnorderedAccessView* pUAV_Dst,
+					 ID3D11ShaderResourceView* pSRV_Dst,
+					 ID3D11ShaderResourceView* pSRV_Src);

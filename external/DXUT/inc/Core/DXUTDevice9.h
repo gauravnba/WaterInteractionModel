@@ -134,7 +134,7 @@ public:
 
     UINT AdapterOrdinal;
     D3DADAPTER_IDENTIFIER9 AdapterIdentifier;
-    WCHAR   szUniqueDescription[512];
+    WCHAR   szUniqueDescription[256];
 
     CGrowableArray <D3DDISPLAYMODE> displayModeList; // Array of supported D3DDISPLAYMODEs
     CGrowableArray <CD3D9EnumDeviceInfo*> deviceInfoList; // Array of CD3D9EnumDeviceInfo* with unique supported DeviceTypes
