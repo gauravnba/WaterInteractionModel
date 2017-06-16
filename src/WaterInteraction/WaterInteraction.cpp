@@ -38,7 +38,7 @@ CDXUTTextHelper*            g_pTxtHelper = NULL;
 // Ocean simulation variables
 OceanSimulator* g_pOceanSimulator = NULL;
 
-bool g_RenderWireframe = false;
+bool g_RenderWireframe = true;
 bool g_PauseSimulation = false;
 int g_BufferType = 0;
 
@@ -81,6 +81,7 @@ void cleanupRenderResource();
 // Rendering routines
 void renderShaded(const CBaseCamera& camera, ID3D11ShaderResourceView* displacemnet_map, ID3D11ShaderResourceView* gradient_map, float time, ID3D11DeviceContext* pd3dContext);
 void renderWireframe(const CBaseCamera& camera, ID3D11ShaderResourceView* displacemnet_map, float time, ID3D11DeviceContext* pd3dContext);
+ID3D11Buffer* getStreamOutputData();
 
 //--------------------------------------------------------------------------------------
 // Entry point to the program. Initializes everything and goes into a message processing 
@@ -132,11 +133,11 @@ void InitApp()
     g_SampleUI.Init( &g_DialogResourceManager );
 
     g_HUD.SetCallback( OnGUIEvent ); int iY = 10;
-    g_HUD.AddButton( IDC_TOGGLEFULLSCREEN, L"Toggle full screen", 32, iY, 140, 26 );
-    g_HUD.AddButton( IDC_TOGGLEREF, L"Toggle REF (F3)", 32, iY += 30, 140, 26, VK_F3 );
-    g_HUD.AddButton( IDC_CHANGEDEVICE, L"Change device (F2)", 32, iY += 30, 140, 26, VK_F2 );
-    g_HUD.AddButton( IDC_WIREFRAME, L"Toggle wireframe", 32, iY += 30, 140, 26, VK_F4 );
-    g_HUD.AddButton( IDC_PAUSE, L"Pause", 32, iY += 30, 140, 26, VK_F5 );
+    //g_HUD.AddButton( IDC_TOGGLEFULLSCREEN, L"Toggle full screen", 32, iY, 140, 26 );
+    //g_HUD.AddButton( IDC_TOGGLEREF, L"Toggle REF (F3)", 32, iY += 30, 140, 26, VK_F3 );
+    g_HUD.AddButton( IDC_CHANGEDEVICE, L"Change device (F2)", 32, iY, 140, 26, VK_F2 );
+    //g_HUD.AddButton( IDC_WIREFRAME, L"Toggle wireframe", 32, iY += 30, 140, 26, VK_F4 );
+    //g_HUD.AddButton( IDC_PAUSE, L"Pause", 32, iY += 30, 140, 26, VK_F5 );
 
     g_SampleUI.SetCallback( OnGUIEvent ); 
 
@@ -420,6 +421,8 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
 		renderWireframe(g_Camera, tex_displacement, (float)app_time, pd3dImmediateContext);
 	else
 		renderShaded(g_Camera, tex_displacement, tex_gradient, (float)app_time, pd3dImmediateContext);
+
+	//Get stream output data
 
 	// HUD rendering
 	g_HUD.OnRender( fElapsedTime ); 

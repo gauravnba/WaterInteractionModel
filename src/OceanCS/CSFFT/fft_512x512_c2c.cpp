@@ -12,6 +12,8 @@
 //
 // Please direct any bugs or questions to SDKFeedback@nvidia.com
 
+#include "DXUT.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>

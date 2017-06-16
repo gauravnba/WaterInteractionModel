@@ -362,7 +362,7 @@ void initRenderResource(const OceanParameter& ocean_param, ID3D11Device* pd3dDev
 	blend_desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	blend_desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	pd3dDevice->CreateBlendState(&blend_desc, &g_pBState_Transparent);
-	assert(g_pBState_Transparent);
+	assert(g_pBState_Transparent);	
 }
 
 void cleanupRenderResource()

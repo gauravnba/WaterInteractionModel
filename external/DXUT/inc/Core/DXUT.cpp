@@ -5704,14 +5704,27 @@ HRESULT DXUTSnapDeviceSettingsToEnumDevice( DXUTDeviceSettings* pDeviceSettings,
 
         pEnum = DXUTGetD3D11Enumeration( forceEnum, false, forceFL);
 
-        CD3D11EnumAdapterInfo* pAdapterInfo = NULL; 
+        CD3D11EnumAdapterInfo* pAdapterInfo = nullptr;
         CGrowableArray <CD3D11EnumAdapterInfo*>* pAdapterList = pEnum->GetAdapterInfoList();
         CD3D11EnumAdapterInfo* tempAdapterInfo = pAdapterList->GetAt( 0 );
         for( int iAdapter = 0; iAdapter < pAdapterList->GetSize(); iAdapter++ )
         {
             tempAdapterInfo = pAdapterList->GetAt( iAdapter );
-            if (tempAdapterInfo->AdapterOrdinal == pDeviceSettings->d3d11.AdapterOrdinal) pAdapterInfo = tempAdapterInfo;
+			if (tempAdapterInfo->AdapterDesc.VendorId == 4318)
+			{
+				pAdapterInfo = tempAdapterInfo;
+			}
         }
+
+		if (pAdapterInfo == nullptr)
+		{
+			for (int iAdapter = 0; iAdapter < pAdapterList->GetSize(); iAdapter++)
+			{
+				tempAdapterInfo = pAdapterList->GetAt(iAdapter);
+				if (tempAdapterInfo->AdapterOrdinal == pDeviceSettings->d3d11.AdapterOrdinal) pAdapterInfo = tempAdapterInfo;
+			}
+		}
+
         if (pAdapterInfo == NULL) return E_FAIL; // no adapters found.
         CD3D11EnumDeviceSettingsCombo* pDeviceSettingsCombo = NULL;
         float biggestScore = 0;

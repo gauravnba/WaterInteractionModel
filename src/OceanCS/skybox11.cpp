@@ -13,6 +13,7 @@
 // Please direct any bugs or questions to SDKFeedback@nvidia.com
 
 #include "DXUT.h"
+
 #include "skybox11.h"
 
 HRESULT CompileShaderFromFile( WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut );

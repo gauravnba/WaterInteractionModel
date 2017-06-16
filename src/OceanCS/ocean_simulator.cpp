@@ -20,7 +20,6 @@
 // Disable warning "conditional expression is constant"
 #pragma warning(disable:4127)
 
-
 #define HALF_SQRT_2	0.7071068f
 #define GRAV_ACCEL	981.0f	// The acceleration of gravity, cm/s^2
 
@@ -378,7 +377,6 @@ OceanSimulator::~OceanSimulator()
 #endif
 }
 
-
 // Initialize the vector field.
 // wlen_x: width of wave tile, in meters
 // wlen_y: length of wave tile, in meters
@@ -547,22 +545,36 @@ void OceanSimulator::updateDisplacementMap(float time)
 
 	m_pd3dImmediateContext->GenerateMips(m_pGradientSRV);
 
-	// Define CS_DEBUG_BUFFER to enable writing a buffer into a file.
+	// Define CS_DEBUG_BUFFER to enable writing to a buffer.
 #ifdef CS_DEBUG_BUFFER
     {
 		m_pd3dImmediateContext->CopyResource(m_pDebugBuffer, m_pBuffer_Float_Dxyz);
-        D3D11_MAPPED_SUBRESOURCE mapped_res;
+        //D3D11_MAPPED_SUBRESOURCE mapped_res;
         m_pd3dImmediateContext->Map(m_pDebugBuffer, 0, D3D11_MAP_READ, 0, &mapped_res);
         
 		// set a break point below, and drag MappedResource.pData into in your Watch window
 		// and cast it as (float*)
 
 		// Write to disk
-		D3DXVECTOR2* v = (D3DXVECTOR2*)mapped_res.pData;
+		D3DXVECTOR3* v = (D3DXVECTOR3*)mapped_res.pData;
 
-		FILE* fp = fopen(".\\tmp\\Ht_raw.dat", "wb");
-		fwrite(v, 512*512*sizeof(float)*2*3, 1, fp);
-		fclose(fp);
+		//FILE* fp;
+		//errno_t error = fopen_s(&fp, "Mesh_raw.txt", "w");
+		//if (error)
+		//{
+		//	printf("Error type: %i", error);
+		//}
+		//else
+		//{
+		//	fwrite(v, 512 * 512 * sizeof(float) * 2 * 3, 1, fp);
+
+		//	//int verts = 525653;
+		//	//for (int i = 0; i < verts; ++i)
+		//	//{
+		//	//	fprintf(fp, "%f, %f, %f\n", v[i].x, v[i].y, v[i].z);
+		//	//}
+		//}
+		//fclose(fp);
 
 		m_pd3dImmediateContext->Unmap(m_pDebugBuffer, 0);
     }
@@ -578,7 +590,6 @@ ID3D11ShaderResourceView* OceanSimulator::getD3D11GradientMap()
 {
 	return m_pGradientSRV;
 }
-
 
 const OceanParameter& OceanSimulator::getParameters()
 {

@@ -20,7 +20,7 @@
 #define STRICT
 #endif
 
-// If app hasn't choosen, set to work with Windows XP and beyond
+// If app hasn't chosen, set to work with Windows XP and beyond
 #ifndef WINVER
 #define WINVER         0x0501
 #endif

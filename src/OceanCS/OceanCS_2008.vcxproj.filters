@@ -118,6 +118,7 @@
     <FxCompile Include="ocean_simulator_cs.hlsl" />
     <FxCompile Include="ocean_simulator_vs_ps.hlsl" />
     <FxCompile Include="skybox11.hlsl" />
+    <FxCompile Include="write_to_shared.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="ocean_shading.hlsl" />
