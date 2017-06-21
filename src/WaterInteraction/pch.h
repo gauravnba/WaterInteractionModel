@@ -15,5 +15,21 @@
 #include <memory.h>
 #include <tchar.h>
 
+// Project header files
+#include <DXUT.h>
+#include <DXUTgui.h>
+#include <DXUTmisc.h>
+#include <DXUTCamera.h>
+#include <DXUTSettingsDlg.h>
+#include <SDKmisc.h>
+
+#include "ocean_simulator.h"
+#include "skybox11.h"
+
+
+#include <vector>
+#include "RenderableObject.h"
+#include <memory>
+
 // Including SDKDDKVer.h defines the highest available Windows platform.
 #include <SDKDDKVer.h>

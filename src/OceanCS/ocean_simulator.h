@@ -15,14 +15,18 @@
 #ifndef _OCEAN_WAVE_H
 #define _OCEAN_WAVE_H
 
-#define CS_DEBUG_BUFFER
+#define SO_ENABLE
+//#define SO_FILE_IO
+//#define SO_FILE_BINARY
 
 #include <D3DX11.h>
 
 #include "CSFFT/fft_512x512.h"
 
-//#define CS_DEBUG_BUFFER
 #define PAD16(n) (((n)+15)/16*16)
+
+// Forward declare render functions
+ID3D11Buffer* getMeshVB();
 
 struct OceanParameter
 {
@@ -130,7 +134,7 @@ protected:
 	// FFT wrap-up
 	CSFFT512x512_Plan m_fft_plan;
 
-#ifdef CS_DEBUG_BUFFER
+#ifdef SO_ENABLE
 	ID3D11Buffer* m_pDebugBuffer;
 #endif
 };

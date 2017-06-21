@@ -17,6 +17,12 @@
     <Filter Include="DXUT\Optional">
       <UniqueIdentifier>{a2979c9d-787c-498d-b09e-24822a1e56fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Media">
+      <UniqueIdentifier>{71fedd89-c59e-42a8-8e0b-66d0f6ef2772}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{892973b1-97e8-4573-a9f8-0c4e729adc55}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\Common\DXUT\Optional\directx.ico">
@@ -24,6 +30,18 @@
     </Image>
     <Image Include="..\..\external\DXUT\inc\Optional\directx.ico">
       <Filter>DXUT\Optional</Filter>
+    </Image>
+    <Image Include="Media\Font.dds">
+      <Filter>Media</Filter>
+    </Image>
+    <Image Include="Media\perlin_noise.dds">
+      <Filter>Media</Filter>
+    </Image>
+    <Image Include="Media\reflect_cube.dds">
+      <Filter>Media</Filter>
+    </Image>
+    <Image Include="Media\sky_cube.dds">
+      <Filter>Media</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
@@ -115,12 +133,19 @@
     <FxCompile Include="CSFFT\fft_512x512_c2c.hlsl">
       <Filter>CSFFT</Filter>
     </FxCompile>
-    <FxCompile Include="ocean_simulator_cs.hlsl" />
-    <FxCompile Include="ocean_simulator_vs_ps.hlsl" />
-    <FxCompile Include="skybox11.hlsl" />
-    <FxCompile Include="write_to_shared.hlsl" />
+    <FxCompile Include="ocean_simulator_cs.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="ocean_simulator_vs_ps.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="skybox11.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="ocean_shading.hlsl" />
+    <CustomBuild Include="ocean_shading.hlsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

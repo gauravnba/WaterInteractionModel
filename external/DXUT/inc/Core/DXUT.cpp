@@ -5508,7 +5508,6 @@ HRESULT WINAPI DXUTGetD3D9DeviceCaps( DXUTDeviceSettings* pDeviceSettings, D3DCA
     return pD3D->GetDeviceCaps( pDeviceSettings->d3d9.AdapterOrdinal, pDeviceSettings->d3d9.DeviceType, pCaps );
 }
 
-
 bool WINAPI DXUTIsKeyDown( BYTE vKey )
 {
     bool* bKeys = GetDXUTState().GetKeys();

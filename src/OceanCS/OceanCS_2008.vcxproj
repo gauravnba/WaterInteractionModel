@@ -393,6 +393,10 @@ xcopy "$(ProjectDir)Media" "$(OutDir)Media" /Y /I</Command>
   <ItemGroup>
     <Image Include="..\..\external\DXUT\inc\Optional\directx.ico" />
     <Image Include="..\Common\DXUT\Optional\directx.ico" />
+    <Image Include="Media\Font.dds" />
+    <Image Include="Media\perlin_noise.dds" />
+    <Image Include="Media\reflect_cube.dds" />
+    <Image Include="Media\sky_cube.dds" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="OceanCS.rc" />
@@ -451,20 +455,6 @@ xcopy "$(ProjectDir)Media" "$(OutDir)Media" /Y /I</Command>
     <FxCompile Include="ocean_simulator_cs.hlsl" />
     <FxCompile Include="ocean_simulator_vs_ps.hlsl" />
     <FxCompile Include="skybox11.hlsl" />
-    <FxCompile Include="write_to_shared.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
-    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

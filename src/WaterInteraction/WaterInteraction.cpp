@@ -14,15 +14,8 @@
 
 #include "pch.h"
 
-#include <DXUT.h>
-#include <DXUTgui.h>
-#include <DXUTmisc.h>
-#include <DXUTCamera.h>
-#include <DXUTSettingsDlg.h>
-#include <SDKmisc.h>
-
-#include "ocean_simulator.h"
-#include "skybox11.h"
+using namespace std;
+using namespace CustomDrawing;
 
 //--------------------------------------------------------------------------------------
 // Global variables
@@ -48,6 +41,8 @@ ID3D11ShaderResourceView* g_pSRV_SkyCube = NULL;
 
 CSkybox11 g_Skybox;
 
+// Custom object declarations
+vector<unique_ptr<RenderableObject>> mRenderableList;
 
 //--------------------------------------------------------------------------------------
 // UI control IDs
@@ -81,7 +76,6 @@ void cleanupRenderResource();
 // Rendering routines
 void renderShaded(const CBaseCamera& camera, ID3D11ShaderResourceView* displacemnet_map, ID3D11ShaderResourceView* gradient_map, float time, ID3D11DeviceContext* pd3dContext);
 void renderWireframe(const CBaseCamera& camera, ID3D11ShaderResourceView* displacemnet_map, float time, ID3D11DeviceContext* pd3dContext);
-ID3D11Buffer* getStreamOutputData();
 
 //--------------------------------------------------------------------------------------
 // Entry point to the program. Initializes everything and goes into a message processing 
@@ -132,12 +126,15 @@ void InitApp()
     g_HUD.Init( &g_DialogResourceManager );
     g_SampleUI.Init( &g_DialogResourceManager );
 
-    g_HUD.SetCallback( OnGUIEvent ); int iY = 10;
+    //g_HUD.SetCallback( OnGUIEvent ); int iY = 10;
     //g_HUD.AddButton( IDC_TOGGLEFULLSCREEN, L"Toggle full screen", 32, iY, 140, 26 );
     //g_HUD.AddButton( IDC_TOGGLEREF, L"Toggle REF (F3)", 32, iY += 30, 140, 26, VK_F3 );
-    g_HUD.AddButton( IDC_CHANGEDEVICE, L"Change device (F2)", 32, iY, 140, 26, VK_F2 );
+    //g_HUD.AddButton( IDC_CHANGEDEVICE, L"Change device (F2)", 32, iY, 140, 26, VK_F2 );
     //g_HUD.AddButton( IDC_WIREFRAME, L"Toggle wireframe", 32, iY += 30, 140, 26, VK_F4 );
     //g_HUD.AddButton( IDC_PAUSE, L"Pause", 32, iY += 30, 140, 26, VK_F5 );
+
+	// Create custom objects to render in the map.
+	mRenderableList.push_back(make_unique<RenderableObject>());
 
     g_SampleUI.SetCallback( OnGUIEvent ); 
 
@@ -284,19 +281,19 @@ void CreateOceanSimAndRender(ID3D11Device* pd3dDevice, const DXGI_SURFACE_DESC* 
 	// The size of displacement map. In this sample, it's fixed to 512.
 	ocean_param.dmap_dim			= 512;
 	// The side length (world space) of square patch
-	ocean_param.patch_length		= 2000.0f;
+	ocean_param.patch_length		= 1000.0f;
 	// Adjust this parameter to control the simulation speed
 	ocean_param.time_scale			= 0.8f;
 	// A scale to control the amplitude. Not the world space height
-	ocean_param.wave_amplitude		= 0.35f;
+	ocean_param.wave_amplitude		= 0.3f;
 	// 2D wind direction. No need to be normalized
-	ocean_param.wind_dir			= D3DXVECTOR2(0.8f, 0.6f);
+	ocean_param.wind_dir			= D3DXVECTOR2(0.3f, 0.2f);
 	// The bigger the wind speed, the larger scale of wave crest.
 	// But the wave scale can be no larger than patch_length
 	ocean_param.wind_speed			= 600.0f;
 	// Damp out the components opposite to wind direction.
 	// The smaller the value, the higher wind dependency
-	ocean_param.wind_dependency		= 0.07f;
+	ocean_param.wind_dependency		= 0.7f;
 	// Control the scale of horizontal movement. Higher value creates
 	// pointy crests.
 	ocean_param.choppy_scale		= 1.3f;
@@ -356,6 +353,11 @@ HRESULT CALLBACK OnD3D11CreateDevice( ID3D11Device* pd3dDevice, const DXGI_SURFA
 	assert(g_pSkyCubeMap);
 
 	g_Skybox.OnD3D11CreateDevice(pd3dDevice, 50, g_pSkyCubeMap, g_pSRV_SkyCube);
+
+	for (uint32_t i = 0; i < mRenderableList.size(); ++i)
+	{
+		mRenderableList[i]->Initialize(L"Media\\tiny.sdkmesh", pd3dDevice);
+	}
 
     return S_OK;
 }
@@ -422,12 +424,16 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
 	else
 		renderShaded(g_Camera, tex_displacement, tex_gradient, (float)app_time, pd3dImmediateContext);
 
-	//Get stream output data
+	// Render our mesh
+	for (uint32_t i = 0; i < mRenderableList.size(); ++i)
+	{
+		//mRenderableList[i]->Draw(fElapsedTime);
+	}
 
 	// HUD rendering
 	g_HUD.OnRender( fElapsedTime ); 
 	g_SampleUI.OnRender( fElapsedTime );
-	
+
 	RenderText();
 }
 

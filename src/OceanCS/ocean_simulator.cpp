@@ -315,7 +315,7 @@ OceanSimulator::OceanSimulator(OceanParameter& params, ID3D11Device* pd3dDevice)
 	// FFT
 	fft512x512_create_plan(&m_fft_plan, m_pd3dDevice, 3);
 
-#ifdef CS_DEBUG_BUFFER
+#ifdef SO_ENABLE
 	D3D11_BUFFER_DESC buf_desc;
 	buf_desc.ByteWidth = 3 * input_half_size * float2_stride;
     buf_desc.Usage = D3D11_USAGE_STAGING;
@@ -372,7 +372,7 @@ OceanSimulator::~OceanSimulator()
 
 	SAFE_RELEASE(m_pd3dImmediateContext);
 
-#ifdef CS_DEBUG_BUFFER
+#ifdef SO_ENABLE
 	SAFE_RELEASE(m_pDebugBuffer);
 #endif
 }
@@ -545,36 +545,40 @@ void OceanSimulator::updateDisplacementMap(float time)
 
 	m_pd3dImmediateContext->GenerateMips(m_pGradientSRV);
 
-	// Define CS_DEBUG_BUFFER to enable writing to a buffer.
-#ifdef CS_DEBUG_BUFFER
+#ifdef SO_ENABLE
     {
 		m_pd3dImmediateContext->CopyResource(m_pDebugBuffer, m_pBuffer_Float_Dxyz);
-        //D3D11_MAPPED_SUBRESOURCE mapped_res;
         m_pd3dImmediateContext->Map(m_pDebugBuffer, 0, D3D11_MAP_READ, 0, &mapped_res);
         
 		// set a break point below, and drag MappedResource.pData into in your Watch window
 		// and cast it as (float*)
 
-		// Write to disk
-		D3DXVECTOR3* v = (D3DXVECTOR3*)mapped_res.pData;
+		// Write to main memory
+		D3DXVECTOR3* capturedMesh = (D3DXVECTOR3*)mapped_res.pData;
+		capturedMesh;
 
-		//FILE* fp;
-		//errno_t error = fopen_s(&fp, "Mesh_raw.txt", "w");
-		//if (error)
-		//{
-		//	printf("Error type: %i", error);
-		//}
-		//else
-		//{
-		//	fwrite(v, 512 * 512 * sizeof(float) * 2 * 3, 1, fp);
-
-		//	//int verts = 525653;
-		//	//for (int i = 0; i < verts; ++i)
-		//	//{
-		//	//	fprintf(fp, "%f, %f, %f\n", v[i].x, v[i].y, v[i].z);
-		//	//}
-		//}
-		//fclose(fp);
+#ifdef SO_FILE_IO
+		//Write to disk
+		FILE* fp;
+		errno_t error = fopen_s(&fp, "Mesh_raw.txt", "w");
+		if (error)
+		{
+			printf("Error type: %i", error);
+		}
+		else
+		{
+#ifdef SO_FILE_BINARY
+			fwrite(capturedMesh, 512 * 512 * sizeof(float) * 2 * 3, 1, fp);
+#else
+			int verts = 524288; // (512 * 512 * 2 * 3) / 3
+			for (int i = 0; i < verts; ++i)
+			{
+				fprintf(fp, "%f, %f, %f\n", capturedMesh[i].x, capturedMesh[i].y, capturedMesh[i].z);
+			}
+#endif
+		}
+		fclose(fp);
+#endif
 
 		m_pd3dImmediateContext->Unmap(m_pDebugBuffer, 0);
     }

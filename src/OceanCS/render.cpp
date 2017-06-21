@@ -1310,3 +1310,8 @@ void renderWireframe(const CBaseCamera& camera, ID3D11ShaderResourceView* displa
 	// Restore states
 	pd3dContext->RSSetState(g_pRSState_Solid);
 }
+
+ID3D11Buffer* getMeshVB()
+{
+	return g_pMeshVB;
+}
